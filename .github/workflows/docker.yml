@@ -3,6 +3,12 @@ name: Build
 # Controls when the workflow will run
 on:
   workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
   push:
     branches:
       - 'main'
@@ -45,6 +51,9 @@ jobs:
             type=ref,event=pr
             type=sha
             type=edge
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
