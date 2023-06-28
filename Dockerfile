@@ -9,7 +9,7 @@ COPY Cargo.toml ./
 RUN apt-get update && apt-get install -y cmake golang-go && \
     rm -rf /var/lib/apt/lists/*
 
-RUN cargo build
+RUN cargo build -Z sparse-registry
 
 ##
 ## quiche-base: quiche image for apps
