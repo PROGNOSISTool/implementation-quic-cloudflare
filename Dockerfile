@@ -1,5 +1,5 @@
 # Adapted from https://github.com/cloudflare/quiche/blob/master/Dockerfile
-FROM rust:1.66 as build
+FROM rustlang/rust:nightly-slim as build
 
 WORKDIR /build
 
@@ -9,7 +9,7 @@ COPY Cargo.toml ./
 RUN apt-get update && apt-get install -y cmake golang-go && \
     rm -rf /var/lib/apt/lists/*
 
-RUN export CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse && cargo build
+RUN cargo +nightly build -Z sparse-registry
 
 ##
 ## quiche-base: quiche image for apps
