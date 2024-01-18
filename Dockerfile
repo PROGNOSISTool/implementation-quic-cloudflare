@@ -1,15 +1,15 @@
 # Adapted from https://github.com/cloudflare/quiche/blob/master/Dockerfile
-FROM rustlang/rust:nightly-slim as build
+FROM rust:1.48 as build
 
 WORKDIR /build
 
 COPY src/ ./src/
-COPY Cargo.toml ./
+COPY Cargo.toml Cargo.lock ./
 
 RUN apt-get update && apt-get install -y cmake golang-go && \
     rm -rf /var/lib/apt/lists/*
 
-RUN cargo +nightly build -Z sparse-registry
+RUN cargo build
 
 ##
 ## quiche-base: quiche image for apps
@@ -24,9 +24,9 @@ COPY --from=build \
      /usr/local/bin/
 
 COPY --from=build \
-     /build/src/bin/cert.crt \
-     /build/src/bin/cert.key \
-     /build/src/bin/rootCA.crt \
+     /build/src/bin/crypto/cert.crt \
+     /build/src/bin/crypto/cert.key \
+     /build/src/bin/crypto/rootCA.crt \
      ./crypto/
 
 RUN cp ./crypto/rootCA.crt /usr/local/share/ca-certificates/ && update-ca-certificates
