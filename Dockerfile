@@ -1,5 +1,5 @@
 # Adapted from https://github.com/cloudflare/quiche/blob/master/Dockerfile
-FROM rust:1.48 as build
+FROM rust:1.75.0 as build
 
 WORKDIR /build
 
@@ -23,11 +23,7 @@ COPY --from=build \
      /build/target/debug/quiche-server \
      /usr/local/bin/
 
-COPY --from=build \
-     /build/src/bin/crypto/cert.crt \
-     /build/src/bin/crypto/cert.key \
-     /build/src/bin/crypto/rootCA.crt \
-     ./crypto/
+COPY crypto/ ./crypto/
 
 RUN cp ./crypto/rootCA.crt /usr/local/share/ca-certificates/ && update-ca-certificates
 
